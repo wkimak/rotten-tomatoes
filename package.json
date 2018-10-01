@@ -4,8 +4,10 @@
   "description": "Rotten Tomatoes D3 and server-side rendering",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --mode development --open",
-    "build": "webpack -p"
+    "start": "webpack-dev-server --mode development --open --watch",
+    "react-dev": "webpack -d --watch",
+    "build": "webpack -p",
+    "server": "nodemon server/index.js"
   },
   "repository": {
     "type": "git",
