@@ -7,7 +7,7 @@
     "start": "webpack-dev-server --mode development --open --watch",
     "react-dev": "webpack -d --watch",
     "build": "webpack -p",
-    "server": "nodemon server/index.js"
+    "server": "nodemon --exec babel-node server/index.js"
   },
   "repository": {
     "type": "git",
@@ -20,9 +20,11 @@
   },
   "homepage": "https://github.com/wkimak/rotten-tomatoes#readme",
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
-    "babel-preset-env": "^1.7.0",
     "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "html-webpack-plugin": "^3.2.0",
     "nodemon": "^1.18.4",
@@ -33,6 +35,7 @@
   "dependencies": {
     "express": "^4.16.3",
     "react": "^16.5.2",
-    "react-dom": "^16.5.2"
+    "react-dom": "^16.5.2",
+    "react-dom-server": "0.0.5"
   }
 }
