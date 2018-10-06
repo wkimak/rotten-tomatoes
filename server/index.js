@@ -3,10 +3,28 @@ import React from 'react';
 import App from '../client/src/components/App.jsx';
 import { renderToString } from 'react-dom/server';
 import path from 'path';
+import axios from 'axios';
+import APIkey from '../config.js';
+
+console.log(APIkey)
+
 
 const app = express();
 
 app.use(express.static('./client/dist'));
+
+
+
+app.get('/api/movie', (req, res) => {
+  axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${APIkey.APIkey}&query=${req.query.title}`)
+  .then((response) => {
+    res.send(response.data.results);
+  })
+  .catch((err) => {
+    console.log('ERROR fetching movie', err);
+  })
+})
+
 
 app.get('/*', (req, res) => {
   const jsx = ( <App /> );
@@ -26,9 +44,11 @@ function htmlTemplate( reactDom ) {
     <html>
     <head>
       <title>Rotten Tomatoes</title>
+      <link type="text/css" rel="stylesheet" href="style.css"/>
     </head>
     <body>
       <div id='app'>${ reactDom }</div>
+      <script src='bundle.js'></script>
     </body>
     </html>
     `

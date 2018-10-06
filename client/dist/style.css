@@ -1,0 +1,59 @@
+* {
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+}
+
+
+/* ------- Navbar ------- */
+.navbar_container {
+	height: 60px;
+	width: 100%;
+	background-color: black;
+}
+
+.navbar_container img {
+	height: 100%;
+	width: auto;
+	float: right;
+}
+
+
+/* ------- Sidebar ------- */
+.sidebar_container {
+  width: 300px;
+  background-color: red;
+  height: 100vh;
+}
+
+/* Form */
+.form_container {
+	height: 400px;
+	width: 100%;
+	background-color: black;
+	padding-top: 90px;
+	
+}
+
+.form_container label {
+	color: white;
+	display: block;
+	font-weight: bold;
+	text-align: left;
+	position: relative;
+	left: 40px;
+	margin-bottom: 10px;
+}
+
+.form_container input {
+	display: block;
+	width: 80%;
+	height: 40px;
+	margin: auto;
+	margin-bottom: 30px;
+}
+
+.form_container input[type='submit'] {
+	background-color: orange;
+	border-radius: 5px;
+}
