@@ -1,10 +1,12 @@
-import express from 'express';
-import React from 'react';
-import App from '../client/src/components/App.jsx';
-import { renderToString } from 'react-dom/server';
-import path from 'path';
-import axios from 'axios';
-import keys from '../config.js';
+const express = require('express');
+
+// import React from 'react';
+// import App from '../client/src/components/App.jsx';
+// import { renderToString } from 'react-dom/server';
+const path = require('path');
+const axios = require('axios');
+const keys = require('../config.js');
+
 
 
 
