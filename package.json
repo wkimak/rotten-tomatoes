@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "react-dev": "webpack -d --watch",
-    "server": "node --exec babel-node server/index.js",
+    "server": "babel-node server/index.js",
     "build": "webpack -p",
-    "start": "npm run react-dev && npm run server"
+    "start": "npm run server"
   },
   "repository": {
     "type": "git",
