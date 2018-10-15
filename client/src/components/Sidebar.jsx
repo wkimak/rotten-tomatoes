@@ -15,7 +15,7 @@ class Sidebar extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    this.props.fetchMovie(this.state.title);
+    this.props.fetchBarChartData(this.state.title);
   }
 
   render() {
