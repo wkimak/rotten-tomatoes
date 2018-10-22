@@ -3,101 +3,60 @@ import * as d3 from 'd3';
 
 class BarChart extends Component {
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if(this.props.title !== prevProps.title) {
+ 
+
+  componentDidUpdate(prevProps, prevState) {
+    if(this.props.genreId !== prevProps.genreId) {
       this.drawChart();
     }
   }
 
   componentDidMount() {
-    if(this.props.title) {
       this.drawChart();
-    }
   }
 
   drawChart() {
-    const { barChartData } = this.props;
+    const svg = d3.select('.chart').attr('height', 800).attr('width', '90%').attr('transform', 'rotate(180)');
+    
+    const data = [];
 
-    const data = [{ label: 'popularity', stat: barChartData.popularity }, 
-                  { label: 'vote count', stat: barChartData.vote_count }, 
-                  { label: 'vote average', stat: barChartData.vote_average }];
+    this.props.movieList.map((movie) => {
+      data.push({ movieId: movie.id, title: movie.original_title, vote_average: movie.vote_average });
+    });
+ 
+    const g = svg.selectAll("g")
+                   .data(data);
 
-    const svg = d3.select('.chart').attr('height', 500).attr('width', '50%');
+    const initialG = g.enter()
+           .append('g')
+           .attr("transform", function({ vote_average }, i) { 
+            return "translate" + "(" + (i * 60) + ", 0)"; 
+          });
 
-/* ---- While rects already exist ----- */
-    svg.selectAll("rect")
-      .data(data)
-      .transition()
-      .duration(750)
-      .style('fill', 'orange')
-      .attr('x', (d, i) => i * 150)
-      .attr('y', ({ stat }, i) => {
-        if(stat < 30) {
-         return 500 - 10 * stat;
-        } else {
-          return 500 - 3 * stat;
-        }
-       })
-      .attr('width', 50)
-      .attr('height', ({ stat }, i) => stat * 10);
+    const rect = initialG.append('rect')
+       .style('fill', 'orange')
+       .attr('width', 50)
+       .attr('height', ({ vote_average }) => vote_average * 60);
 
-    svg.selectAll('text')
-      .data(data)
-      .transition()
-      .delay(750)
-      .text(({ label, stat }) => label + ': ' + stat)
-      .attr('x', (d,i) => i * 150)
-      .attr('y', ({ stat },i) => {
-        if(stat < 30) {
-          return 500 - 12 * stat
-        } else {
-          return 500 - 3.2 * stat;
-        }
-      });
+    const text = initialG.append('text')
+        .text(({ title }) => title)
+        .style('transform', 'rotate(-90deg)')
+        .attr('x', (d, i) => -250)
+        .attr('y', (d, i) => i + 30)
+        .on('click', ({ movieId }) => {
+          this.props.fetchActors(movieId)
+      }); 
+      
+      d3.selectAll('rect').data(data).attr('height', ({ vote_average }) => vote_average * 60)
+      d3.selectAll('text').data(data).text(({ title }) => title) 
 
-
-/* ----- Updating rects.. if the rects do not exist yet --- */
-    svg.selectAll("rect")
-      .data(data)
-      .enter()
-      .append("rect")
-      .transition()
-      .duration(750)
-      .style('fill', 'orange')
-      .attr('x', (d, i) => i * 150)
-      .attr('y', ({ stat }, i) => {
-        if(stat < 30) {
-         return 500 - 10 * stat;
-        } else {
-          return 500 - 3 * stat;
-        }
-       })
-      .attr('width', 50)
-      .attr('height', ({ stat }, i) => stat * 10)
-     
-
-    svg.selectAll('text')
-      .data(data)
-      .enter()
-      .append('text')
-      .transition()
-      .delay(750)
-      .text(({ label, stat }) => label + ': ' + stat)
-      .attr('x', (d,i) => i * 150)
-      .attr('y', ({ stat },i) => {
-        if(stat < 30) {
-          return 500 - 12 * stat
-        } else {
-          return 500 - 3.2 * stat;
-        }
-      });
-
+      d3.selectAll('g').data(data).exit().remove();
   }
  
    
   render() {
     return (
-      <div>
+      <div style={{ overflow: 'scroll'}}>
         <svg className='chart'>
         </svg> 
       </div>

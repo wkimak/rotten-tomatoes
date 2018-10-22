@@ -1,53 +1,47 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+import { fetchBarChartData, fetchActorData, genreIds } from '../service.js'
 import Navbar from './Navbar.jsx';
 import Sidebar from './Sidebar.jsx';
 import Main from './Main.jsx';
-import DropDown from './DropDown.jsx';
 import BarChart from './charts/BarChart.jsx';
 import LineGraph from './charts/LineGraph.jsx';
 
 
 class App extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = { 
-      movieTitle: null,
-      barChartData: { popularity: null, 
-                      vote_count: null, 
-                      vote_average: null },
+  state = { 
+      genreId: genreIds.action,
+      movieList: [],
       showGraph: 'BarChart'
-    }
   }
-  
 
-  fetchBarChartData(movieTitle) {
-    axios.get('/api/movie', { params: { title: movieTitle }})
-    .then((res) => {
-      this.setState({
-        title: res.data[0].title,
-        barChartData: { 
-          popularity: res.data[0].popularity,
-          vote_count: res.data[0].vote_count,
-          vote_average: res.data[0].vote_average
-        }
-      })
-    })
-    .catch((err) => {
-      console.log(err);
+  componentDidMount() {
+    this.fetchFromService(genreIds.action);
+  }
+
+  fetchFromService = (genreId) => {
+    fetchBarChartData(genreId, (data) => {
+      this.setState({ movieList: data, genreId: genreId })
     })
   }
 
-  toggleGraph(graphOption) {
+  fetchActors = (movieId) => {
+    fetchActorData(movieId, (data) => {
+      console.log(data);
+    })
+  }
+
+  toggleGraph = (graphOption) => {
     this.setState({ showGraph: graphOption });
   }
 
-  renderGraph() {
+  renderGraph = () => {
     if(this.state.showGraph === 'BarChart') {
-      return <BarChart title={ this.state.title } barChartData={ this.state.barChartData } />
+      return <BarChart genreId={ this.state.genreId } 
+                       movieList={ this.state.movieList } 
+                       fetchActors={ this.fetchActors} />
     } else if(this.state.showGraph === 'LineGraph') {
-      return <LineGraph title={ this.state.title } />
+      return <LineGraph />
     }
   }
 
@@ -56,11 +50,10 @@ class App extends Component {
       <div>
         <Navbar />
         <div className='flex_container'>
-          <Sidebar fetchBarChartData={ this.fetchBarChartData.bind(this) } />
+          <Sidebar fetchFromService={ this.fetchFromService } />
           <Main>
-            <DropDown toggleGraph={ this.toggleGraph.bind(this) } />
             <h1 className='movie_title'>{ this.state.title }</h1>
-           { this.renderGraph() }
+           { this.state.movieList.length ? this.renderGraph() : null }
           </Main>
         </div>
       </div>

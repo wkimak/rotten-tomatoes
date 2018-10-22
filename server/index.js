@@ -1,56 +1,69 @@
 const express = require('express');
-
-// import React from 'react';
-// import App from '../client/src/components/App.jsx';
-// import { renderToString } from 'react-dom/server';
 const path = require('path');
 const axios = require('axios');
 const keys = require('../config.js');
-
-
-
 
 const app = express();
 
 app.use(express.static('./client/dist'));
 
 
-app.get('/api/movie', (req, res) => {
-  axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${keys.APIkey}&query=${req.query.title}`)
+app.get('/api/movies', (req, res) => {
+  axios.get(`https://api.themoviedb.org/3/discover/movie?include_video=false&sort_by=popularity.desc&with_genres=${req.query.genreId}&api_key=${keys.APIkey}&`)
   .then((response) => {
-    res.send(response.data.results);
+
+    const movies = response.data.results.filter((movie) => {
+      return movie.vote_average !== 0;
+    })
+    
+    res.send(movies);
   })
   .catch((err) => {
-    console.log('ERROR fetching movie', err);
+    console.log('ERROR fetching movies', err);
+  })
+})
+
+app.get('/api/actors', (req, res) => {
+  axios.get(`https://api.themoviedb.org/3/movie/${req.query.movieId}/credits?api_key=${keys.APIkey}`)
+
+  .then((response) => {
+    const promises = [];
+    const cast = response.data.cast;
+   
+    for(let i = 0; i < 10; i++) {
+      var p = new Promise((resolve, reject) => {
+        axios.get(`https://api.themoviedb.org/3/person/${cast[i].cast_id}?api_key=${keys.APIkey}&language=en-US`)
+         .then((res) => {
+           resolve({ name: res.data.name }, { popularity: res.data.popularity });
+         })
+         .catch((err) => {
+           resolve();
+         })
+      })
+      
+      promises.push(p);
+    }
+
+    Promise.all(promises)
+      .then((data) => {
+        const results = data.filter((actor) => {
+          return actor;
+        })
+        
+        res.send(results);
+      })
+    
+  })
+  .catch((err) => {
+    console.log('ERROR fetching actors', err);
   })
 })
 
 
-// app.get('/*', (req, res) => {
-//   const jsx = ( <App /> );
-//   const reactDom = renderToString(jsx);
 
-//   res.writeHead( 200, { "Content-Type": "text/html" } );
-//   res.end( htmlTemplate(reactDom) );
-// })
 
-app.listen('3000', () => {
+
+
+app.listen(process.env.PORT || '3000', () => {
   console.log('Server listening on port 3000');
 })
-
-// function htmlTemplate( reactDom ) {
-//   return (`
-//     <!DOCTYPE html>
-//     <html>
-//     <head>
-//       <title>Rotten Tomatoes</title>
-//       <link type="text/css" rel="stylesheet" href="style.css"/>
-//     </head>
-//     <body>
-//       <div id='app'>${ reactDom }</div>
-//       <script src='bundle.js'></script>
-//     </body>
-//     </html>
-//     `
-//   );
-// }

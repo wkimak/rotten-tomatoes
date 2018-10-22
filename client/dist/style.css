@@ -51,7 +51,7 @@
 	margin-bottom: 10px;
 }
 
-.form_container input {
+.form_container select {
 	display: block;
 	width: 80%;
 	height: 40px;
@@ -59,10 +59,6 @@
 	margin-bottom: 30px;
 }
 
-.form_container input[type='submit'] {
-	background-color: orange;
-	border-radius: 5px;
-}
 
 /* ------ Main ------ */
 
@@ -80,5 +76,5 @@
 .chart {
 	display: block;
 	margin: auto;
-	margin-top: 150px;
+	overflow: scroll;
 }
